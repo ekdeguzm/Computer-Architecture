@@ -33,7 +33,7 @@ main:
    	lw $t0, number         
    	
    	# Calculate half the number rounded down
-   	sra $t1, $t0, 1    	# Arithmetic right shift $t0 by 1 bit to divide by 2, rounded down
+   	srl $t1, $t0, 1    	# Arithmetic right shift $t0 by 1 bit to divide by 2, rounded down
 
     	# Print the result (half of the original number rounded down)
     	li $v0, 1           	# Load the syscall code for printing an integer
