@@ -39,8 +39,10 @@ main:
 	move	$t1, $v0
 	
 	LloopBegin:
-		slti 	$t2, $t0, 11
-		beqz 	$t2, LloopEnd
+		# slti 	$t2, $t0, 11
+		# beqz 	$t2, LloopEnd
+		
+		bgt 	$t0, 10, LloopEnd
 		beq 	$t0, $t1, Lincrement
 	
 		li	$v0, 1

@@ -1,4 +1,4 @@
-	.data 
+ 	.data 
 min:	.word	0
 max:	.word	15
 prompt:	.asciiz "Enter number: "

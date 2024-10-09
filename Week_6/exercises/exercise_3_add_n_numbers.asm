@@ -10,34 +10,48 @@
 
 # Enter N: 
 
+# prompt user for number
+
 
 	.data
 prompt:		.asciiz "Enter N: "
 sum:		.word 	0
+counter:	.word 	1
 		.text
 		.globl main
 main:
 	
+	# load sum and counter into register
 	lw	$t2, sum
-	li	$t1, 1				# load 1 into register
+	lw	$t1, counter			
 	
-	li	$v0, 4				# print prompt
+	# print prompt
+	li	$v0, 4				
 	la	$a0, prompt
 	syscall 
 	
+	# get user input andstore it inside $t0 using move $v0 --> $t0
 	li	$v0, 5
 	syscall
 	move	$t0, $v0
 	
 	LloopBegin:		
+		
+		# if counter is greater than user input, branch to LloopEnd
 		bgt  	$t1, $t0, LloopEnd
 		
+		# add counter to sum
 		add	$t2, $t2, $t1
+		
+		# increment counter by one
 		addi	$t1, $t1, 1
+		
+		# back to beginning of loop
 		b 	LloopBegin
 	
 	LloopEnd:
-
+	
+		# print sum that is stored in $t2
 		li	$v0, 1
 		move	$a0, $t2
 		syscall

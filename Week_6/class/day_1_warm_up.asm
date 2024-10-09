@@ -8,6 +8,7 @@ main:
 LloopBegin:
 	sge  	$t1, $t0, 3	# if t0 >= 3, set t1 to 1
 	bnez 	$t1, Lend 	# if t1 is greater than 0, branch to Lend
+	
 	move 	$a0, $t0	# move t0 into a0
 	li	$v0, 1		# enter 1 into v0 for syscall to print int
 	syscall

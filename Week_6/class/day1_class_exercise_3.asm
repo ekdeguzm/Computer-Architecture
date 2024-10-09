@@ -22,10 +22,13 @@ main:
 		ble	$t0, $zero, LloopEnd
 		# beq 	$t0, $t1, LloopBegin		# this would cause an infinite loop because if number is 13, it would keep going back to LloopBegin
 		beq	$t0, $t1, LloopDecrement
+		
+		# print number
 		li	$v0, 1
 		move	$a0, $t0
 		syscall
 		
+		# print new line 
 		li	$v0, 4
 		la	$a0, newLine
 		syscall
