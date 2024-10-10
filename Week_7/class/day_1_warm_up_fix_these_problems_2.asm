@@ -9,12 +9,14 @@ coldString:      .asciiz "cold"
     	.globl main
 main:
 
+	# get user input
    	li      $v0, 5    		# Get the current temperature
     	syscall
 	
 	lw	$t0, hotThreshold	# load the integers in registers
 	lw	$t1, mediumThreshold
 
+	# compare user input to hot and medium and cold
     	bge     $v0, $t0, Lhot		# change the middle to label to registers $t0 and $t1
     	bge     $v0, $t1, Lmedium
    	b       Lcold

@@ -15,12 +15,15 @@ newLine: .asciiz "\n"
 	.text
 	.globl main
 main:	
+	# load numbers into registers
 	li	$t0, 20
 	li	$t1, 13
 	
 	LloopBegin:
+		# this is the condition, if 20 becomes less that 0, end loop
 		ble	$t0, $zero, LloopEnd
 		# beq 	$t0, $t1, LloopBegin		# this would cause an infinite loop because if number is 13, it would keep going back to LloopBegin
+		# once the 20 number is subtracted enough to match $t1, go straight to LloopDecrement without printing
 		beq	$t0, $t1, LloopDecrement
 		
 		# print number

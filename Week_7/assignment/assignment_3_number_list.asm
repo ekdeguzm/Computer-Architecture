@@ -53,8 +53,10 @@ main:
 		# bnez 	$t2, LloopEnd 
 		
 		# this is a more concise version from above	
+		# if count is greater than upper bound, end loop
 		bgt 	$t0, $t1, LloopEnd
 		
+		# print count
 		li	$v0, 1
 		move	$a0, $t0
 		syscall
