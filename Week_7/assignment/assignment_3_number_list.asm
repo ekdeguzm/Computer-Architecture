@@ -47,15 +47,22 @@ main:
 	
 	LloopBegin:
 		lw	$t0, count
-		sgt	$t2, $t0, $t1
-		bnez 	$t2, LloopEnd 	
+		
+		# sgt	$t2, $t0, $t1
+		# bnez 	$t2, LloopEnd 
+		
+		# this is a more concise version from above	
+		bgt 	$t0, $t1, LloopEnd
 		
 		li	$v0, 1
 		move	$a0, $t0
 		syscall
 		
-		seq 	$t2, $t0, $t3
-		bnez 	$t2, LloopSpecial
+		# seq 	$t2, $t0, $t3
+		# bnez 	$t2, LloopSpecial
+		
+		# this is a more concise version from above
+		beq 	$t0, $t3, LloopSpecial
 		
 		b 	LIncrement
 	
