@@ -14,11 +14,11 @@ main:
         	
        	li $v0, 5              # load immediate into the $v0 register with 5 tells assembly to read the input
         syscall			# syscall puts it into action
-        sw $v0, userNumber
+        #sw $v0, userNumber
         
 	lw $t0, magicNumber		# Load word of magicNumber which holds the number 4
-	lw $t1, userNumber		# Load word of userNumber which holds the input of user 
-	sub $t2, $t0, $t1
+	#lw $t1, userNumber		# Load word of userNumber which holds the input of user 
+	sub $t2, $t0, $v0
 	
 	li $v0, 1
 	move $a0, $t2

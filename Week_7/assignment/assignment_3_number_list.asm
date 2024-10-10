@@ -41,12 +41,13 @@ main:
 	# 	syscall1(count)
 	#}
 	
-	
+	# load upper bound, special character, and count into registers
 	lw	$t1, upper
 	lw 	$t3, special
+	lw	$t0, count
 	
 	LloopBegin:
-		lw	$t0, count
+
 		
 		# sgt	$t2, $t0, $t1
 		# bnez 	$t2, LloopEnd 
