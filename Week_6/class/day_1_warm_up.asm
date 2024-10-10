@@ -12,6 +12,8 @@ LloopBegin:
 	move 	$a0, $t0	# move t0 into a0
 	li	$v0, 1		# enter 1 into v0 for syscall to print int
 	syscall
+	
+	
 	addi 	$t0, $t0, 1 	# add 1 into t0
 	
 	b 	LloopBegin	# go to beginning of loop
