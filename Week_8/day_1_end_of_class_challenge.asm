@@ -2,7 +2,10 @@
 
 # int index = syscall5();
 # numbers[index] = 0;
+
 # or 
+
+# This is the one i'm doing below
 # numbers[index] = syscall5();
 
 	.data
