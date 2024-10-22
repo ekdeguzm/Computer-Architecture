@@ -9,6 +9,61 @@
 
 # If the array contained 2, -3, 4, and -5, for example, your program should print 14. (2 + 3 + 4 + 5 = 14.)
 
-	.data
+		.data
+	
+array: 		.word	2, -3, 4, -5	# absolute value sum should be 14
+array_size:	.word 	4
+
+		.text	
+		.globl main
+main:
+
+	la	$t0, array	# load array address into register
+	lw	$t1, array_size	# load array size, basically the limit
+	li	$t2, 0		# sum
+	li	$t3, 0		# index i
+	
+	LloopBegin:
+		# conditional, end loop if i >= array_size
+		bge	$t3, $t1, LloopEnd
+		
+		# get the offset number by (i*4) , you need to shift left logical 2 times
+		sll	$t4, $t3, 2
+		
+		# add offset into address
+		add	$t5, $t0, $t4
+		
+		# dereference number into register
+		lw	$t6, ($t5)
+		
+		# if number is positive, add to sum
+		bgez 	$t6, LloopIfPositive
+		
+		# if not, make it positive
+		b	LloopIfNegative
+		
+	
+	LloopIfPositive:
+		# add the $t6 holds the data/number, add that into the sum
+		add 	$t2, $t2, $t6
+		b 	LloopIncrement	
+	
+	LloopIfNegative:
+		# subtract from zero to get positive value, the branch to LloopIfPositive
+		sub 	$t6, $zero, $t6
+		b 	LloopIfPositive
+		
+	LloopIncrement: 
+		# i++
+		addi	$t3, $t3, 1
+		b 	LloopBegin
+	
+	LloopEnd:
+		# print sum
+		li	$v0, 1
+		move 	$a0, $t2
+		syscall
+	
+	jr	$ra
 	
 	
