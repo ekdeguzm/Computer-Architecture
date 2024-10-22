@@ -36,7 +36,10 @@ main:
 		# multiply index by 4
 		sll	$t3, $t0, 2		# take the memory location from $t1, shift it to the left 2 times, 
 						# that multiplies by 4, store in $t3
-		add	$t4, $t1, $t3	
+		
+		add	$t4, $t1, $t3		# this gives us the offset from $t1, giving us memory address of the array value
+						# 298,500,600 --> 298,500,604 --> 298,500,608
+		
 	
 		lw	$a0, ($t4)		# this is a number. this is not printing what is in $t4, 
 						# this is getting the number that is within $t4's address and storing it inside $a0
