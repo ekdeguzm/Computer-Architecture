@@ -74,6 +74,43 @@ main:
     # gets stored in $a3.
     #
 
+	
+	la	$a0, string	# get address of string
+	lb	$a1, orig	# store char of orig in register
+	lb	$a2, new	# store new char in register
+	li	$a3, 0		# count
+	
+	
+LloopBegin:
+
+	# dereference $a0
+	lb 	$t1, ($a0)
+	
+	# if value = 0, end loop
+	beqz	$t1, Lloop_end
+	
+	# if value = original, branch to replace
+	beq 	$t1, $a1, LloopReplace
+	
+	# if not, increment
+	b 	LloopIncrement
+
+
+LloopReplace:
+	# take the new value and store byte within $a0
+	sb	$a2, ($a0)
+	# increment count 
+	addi 	$a3, $a3, 1
+
+LloopIncrement:
+	# add one to the memory address to get next character
+	addi	$a0, $a0, 1
+	
+	# branch back to beginning
+	b	LloopBegin
+
+
+
 
     # This code will output the string. Before you write the code above, it will 
 	# be exactly the string the user entered. Once you've added your code, you 
