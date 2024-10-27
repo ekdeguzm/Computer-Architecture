@@ -48,16 +48,12 @@ main:
 	
 	LloopBegin:
 		# if i >= Nelems, LloopEnd condition
-		bge	$t0, $t2, LloopEnd
+		beqz 	$t0, LloopEnd
 		lw	$t3, ($t1)
 		
 		# if (arr[i] < min)
-		blt	$t3, $t4, LloopLess
+		bltz 	$t3, LloopLess
 		
-		# if (arr[i] > max)
-		bgt	$t3, $t5, LloopGreater
-		
-		# arr[i] is within the range, increment
 		b	LloopIncrement
 		
 		

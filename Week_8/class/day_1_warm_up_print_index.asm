@@ -14,7 +14,8 @@
 
 		.data
 index: 		.word	0
-string:		.asciiz	"banana"
+string:		.asciiz	"beeeenana"
+target: 	.asciiz "a"
 
 	
 		.text 
@@ -22,21 +23,37 @@ string:		.asciiz	"banana"
 main:
 
 	la	$t0, string	# string = 268,500,992
-	lb	$t1, string	# loads 'b' into register
-	lw	$t2, index
+	lw	$t2, index	# index = 0
+	la	$t5, target	# target is 'a', and what gets loaded in is the address of 'a'
+	lb	$t6, ($t5)	# the asciiz code of 'a' gets stored in $t6, deference here from the address stored in $t5
 	
-	add	$a0, $t0, 1
-	li	$v0, 11
-	syscall
 	
 	LloopBegin:
+		
+		# dereference what is inside $t0 and take alook to see what it is. Store that word in $t3.
+		# 'b' gets stored in initially. 
+		lb	$t3, ($t0)
+		
+		# if current = 'a', break
+		beq 	$t3, $t6, LloopEnd
+		
+		# if current = '\0', break
+		beqz 	$t3, LloopEnd
+		
+		# add to string address
+		addi 	$t0, $t0, 1
+		
+		# add to index
+		addi	$t2, $t2, 1
+		
+		b 	LloopBegin
+		
+	LloopEnd:
 	
-	# if current = 'a', break
-	
-	# if current = '\0', break
-	
-	
-	Lend:
+	# print index number
+	li	$v0, 1
+	move	$a0, $t2
+	syscall
 	
 	jr 	$ra
 		
