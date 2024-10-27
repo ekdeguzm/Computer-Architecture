@@ -47,11 +47,13 @@ main:
 			
 	
 	LloopBegin:
-		# if i >= Nelems, LloopEnd condition
-		beqz 	$t0, LloopEnd
+		# if i = 0, LloopEnd condition
+		addi	$t2, $t2, -1
+		beqz 	$t2, LloopEnd
+		
 		lw	$t3, ($t1)
 		
-		# if (arr[i] < min)
+		# if (arr[i] < min) go to LloopLess
 		bltz 	$t3, LloopLess
 		
 		b	LloopIncrement
@@ -59,24 +61,16 @@ main:
 		
 	
 	LloopLess:
-		# store the min value into the value that is within the memory address of $t1
-		sw	$t4, ($t1)
+		
+		sub	$t3, $zero, $t3
+		sw	$t3, ($t1)
 		# increment the result 
 		addi	$t7, $t7, 1
 		b 	LloopIncrement
 	
-	
-	LloopGreater:
-		# store the max value into the memory address of $t1
-		sw	$t5, ($t1)
-		# increment the result
-		addi	$t7, $t7, 1
-		b 	LloopIncrement
-	
-	
 	LloopIncrement:
 		# increment the i index
-		addi	$t0, $t0, 1
+		addi	$t0, $t0, -1
 		# increase address by 4 units
 		addi	$t1, $t1, 4
 		b 	LloopBegin
