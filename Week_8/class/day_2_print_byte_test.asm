@@ -31,6 +31,10 @@ main:
 	move	$a0, $t1
 	syscall
 	
+	li	$v0, 11
+	move	$a0, $t1
+	syscall
+	
 
 	
 	jr 	$ra

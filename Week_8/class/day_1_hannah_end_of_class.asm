@@ -29,7 +29,7 @@ main:
 	
 	bltz	$v0, LloopError
 	bge	$v0, $t1, LloopError
-	move	$t3, $v0
+	move	$t3, $v0		# $t3 contains user index
 	
 	# Get user value
 	la	$a0, prompt2
@@ -38,7 +38,7 @@ main:
 	
 	li	$v0, 5
 	syscall
-	move	$t4, $v0
+	move	$t4, $v0		# $t4 contains user value
 	
 	# Replace value at index with user value
 	sll	$t5, $t3, 2		# index * 4
@@ -48,8 +48,7 @@ main:
 	LloopBegin: 	
 		bge	$t7, $t1, LloopEnd
 		lw	$a0, ($t0)	
-		addi 	$t0, $t0, 4	# increase pointer
-		addi	$t7, $t7, 1	# increase counter
+
 		
 		# Print number
 		li	$v0, 1
@@ -59,6 +58,9 @@ main:
 		move 	$a0, $t8
 		li	$v0, 11
 		syscall
+	
+		addi 	$t0, $t0, 4	# increase pointer
+		addi	$t7, $t7, 1	# increase counter
 	
 		b	LloopBegin
 	

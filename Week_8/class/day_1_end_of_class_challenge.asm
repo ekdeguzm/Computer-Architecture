@@ -15,6 +15,7 @@ numbersSize: 	.word	3
 	.globl main
 main:
 	
+	# this gets the index from the user, stores in $t2
 	li	$v0, 5
 	syscall
 	move	$t0, $v0
