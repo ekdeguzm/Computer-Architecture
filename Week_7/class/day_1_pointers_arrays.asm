@@ -1,6 +1,6 @@
 	.data
-# string:	.asciiz "abcdefghijklmnop" 
-string:		.asciiz "a!@&T."
+string:	.asciiz "abcdefghijklmnop" 
+#string:		.asciiz "a!@&T."
 
 # a = 97	(b = 98, # c = 99, ...)
 # ! = 33
@@ -25,7 +25,7 @@ main:
 				# most similar to: load word
 	
 	# $a0 = 268,500,992			
-	move 	$a0, $t0	
+	# move 	$a0, $t0	
 	
 	li 	$v0, 1
 	syscall
