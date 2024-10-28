@@ -9,8 +9,8 @@ size:  .word 6
     .text
     .globl main
 main:
-    lw    $t0, 0
-    lw    $t1, array
+    lw    $t0, 0			# index
+    lw    $t1, array			# array 
     lw    $t2, size
     lw    $t3, 10
 

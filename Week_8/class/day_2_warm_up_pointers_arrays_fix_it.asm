@@ -25,9 +25,9 @@ main:
         sll	$t5, $t0, 2
         
         # add offset to interate through array 
-       	add 	$t4, $t1, $t5
+       	add 	$t5, $t1, $t5
         
-        lw      $t6, ($t4)		# t4 contains $t1's number
+        lw      $t6, ($t5)		# t4 contains $t1's number
        
         
         bgt   	$t6, $t3, LifGreater	# if the number in t4 is greater than 10, branch to LifGreater
@@ -35,12 +35,12 @@ main:
 	b 	LifEnd			# branch to end to increment
 	
         LifGreater:
-             sw    $t3, ($t4)		# put number 10 into the unit
+             sw    $t3, ($t5)		# put number 10 into the unit
 
         LifEnd:	
     		# print what is it $t4
       		li	$v0, 1
-      		lw 	$a0, ($t4)	
+      		lw 	$a0, ($t5)	
     		syscall		
 
         	addi    $t0, $t0, 1

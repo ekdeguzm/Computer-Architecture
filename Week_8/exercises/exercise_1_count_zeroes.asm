@@ -6,18 +6,18 @@
 
 		.data	
 		
-array:		.word	-5, 0, 12, 0, 5
-array_size:	.word 	5
+array:		.word	-5, 0, 12, 0, 5, 0, 0
+array_size:	.word 	7
 
 		.text
 		.globl main
 		
 main:
 
-	li	$t5, 0		# zero count
 	li	$t0, 0		# index i	 		
 	la	$t1, array	# load address of array into $t1 	
 	lw	$t2, array_size # load array size into $t2
+	li	$t3, 0		# zero count
 	
 	LloopBegin:
 	
@@ -26,10 +26,10 @@ main:
 		bge   	$t0, $t2, LloopEnd
 		
 		# multiply by 4
-		sll	$t3, $t0, 2
+		sll	$t4, $t0, 2
 	
 		# add offset into memory address
-		add 	$t4, $t1, $t3
+		add 	$t4, $t1, $t4
 	
 	
 		# load address $t4 and its data, array[i] into $a0
@@ -44,12 +44,12 @@ main:
 		b 	LloopBegin
 	
 	LloopZero:
-		addi 	$t5, $t5, 1	# increment zero count
+		addi 	$t3, $t3, 1	# increment zero count
 		b 	LloopIncrement
 
 	LloopEnd:
 		# print zero count
-		move	$a0, $t5
+		move	$a0, $t3
 		li	$v0, 1
 		syscall
 	

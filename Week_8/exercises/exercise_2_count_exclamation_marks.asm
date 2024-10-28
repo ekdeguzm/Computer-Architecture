@@ -32,7 +32,7 @@ main:
 		
 	
 	LloopIncrement: 
-		# i++
+		# i++ 
 		addi	$t0, $t0, 1
 		b 	LloopBegin
 		
