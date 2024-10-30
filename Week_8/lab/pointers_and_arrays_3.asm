@@ -38,24 +38,35 @@ main:
 #     }
 # }
 
-	li		$t7, 0			# this is our index
+	li		$t7, 0			# this is result
 	lw		$t0, Nelems		# $t0 is i
         addi            $t0, $t0, -1		# we want to get one lower that our Nelems to fit index 0-8
 	la		$t1, arr		# load address into $t1
 	
 Lbegin:
-	blt		$t0, $zero, Lend	# if (i < 0) goto Lend;
+	blt 		$t0, $zero, Lend	# if (i < 0) goto Lend
+	
+	# Get the index value
 	sll		$t2, $t0, 2		# multiply index by 4 and store in $t2
 	add		$t2, $t2, $t1		# add that offset into the original address and store in $t2
-	lw		$t3, 0($t2)		# retrieve arr[i] from $t2
+	lw		$t3, ($t2)		# retrieve arr[i] from $t2
+	
+	# if positive or zero, decrement 
 	bge		$t3, $zero, Ldec	# if (arr[i] >= 0) goto Ldec
 
+	# if negative, make it positive
 	sub		$t3, $zero, $t3		# $t3 = 0 - $t3 get the absolute value of negative
+	
+	# store value in $t2
 	sw		$t3, 0($t2)		# arr[i] = -arr[i]; make sure that that positive value is now stored in $t2's memory address value
+	
+	# increment the result
 	addi	        $t7, $t7, 1		# result++;	increment $t7 which is the occurance of negative values
 
 Ldec:
-	addi	        $t0, $t0, -1		# i--;
+	# i--
+	addi	        $t0, $t0, -1	
+		
 	b		Lbegin			# goto Lbegin;
 	
 Lend:

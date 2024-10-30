@@ -34,17 +34,17 @@ main:
 	#     result++;
 	# }
 	
-	li		$t7, 0            # $t7 is result, or index
-	lw		$t0, Nelems
-	la		$t1, arr
-	lw		$t2, num
+	li		$t7, 0		  # $t7 is result, or index
+	lw		$t0, Nelems	  # number of elements in array
+	la		$t1, arr	  # array address
+	lw		$t2, num	  # number 2
 
 Lbegin:
 	bge		$t7, $t0, Lend    # if (result >= Nelems) goto Lend;
 	sll		$t3, $t7, 2       # multiply result by 4
 	add		$t3, $t3, $t1     # add to base address of arr
-	lw		$t3, 0($t3)       # retrieve arr[result]
-	beq		$t3, $t2, Lend    # if (arr[result] == num) goto Lend;
+	lw		$t4, ($t3)       # retrieve arr[result]
+	beq		$t4, $t2, Lend    # if (arr[result] == num) goto Lend;
 	addi	        $t7, $t7, 1       # result++;
 	b		Lbegin
 

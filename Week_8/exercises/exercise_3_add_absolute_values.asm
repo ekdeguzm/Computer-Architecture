@@ -31,13 +31,13 @@ main:
 		sll	$t4, $t3, 2
 		
 		# add offset into address
-		add	$t5, $t0, $t4
+		add	$t4, $t0, $t4
 		
 		# dereference number into register
-		lw	$t6, ($t5)
+		lw	$t5, ($t4)
 		
 		# if number is positive, add to sum
-		bgez 	$t6, LloopIfPositive
+		bgez 	$t5, LloopIfPositive
 		
 		# if not, make it positive
 		b	LloopIfNegative
@@ -45,12 +45,12 @@ main:
 	
 	LloopIfPositive:
 		# add the $t6 holds the data/number, add that into the sum
-		add 	$t2, $t2, $t6
+		add 	$t2, $t2, $t5
 		b 	LloopIncrement	
 	
 	LloopIfNegative:
 		# subtract from zero to get positive value, the branch to LloopIfPositive
-		sub 	$t6, $zero, $t6
+		sub 	$t5, $zero, $t5
 		b 	LloopIfPositive
 		
 	LloopIncrement: 
