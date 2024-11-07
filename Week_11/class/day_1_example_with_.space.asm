@@ -30,16 +30,16 @@ prompt: .asciiz "Enter some text: "
 	
 main:
 
-	subi	$sp, $sp, 208
-	sw	$ra, 204($sp)
-	sw	$s0, 200($sp)		# unlocks $s0 to be able to be used
+	subi	$sp, $sp, 24
+	sw	$ra, 20($sp)
+	sw	$s0, 16($sp)		# unlocks $s0 to be able to be used
 	
 	# a0 - address of prompt
 	# a1 - address where user's text gets copied into
 	# a2 - size of region pointed to by $a1, 180 is the max
 	
 	la	$a0, prompt		# load address into $a0,
-	la	$a1, 16($sp)		# gets address from
+	la	$a1, buffer		# gets address from
 	li	$a2, 180		# this is what prevents buffer overload
 	jal	InputConsoleString 
 	
@@ -47,7 +47,7 @@ main:
 	move	$s0, $v0
 	
 	# .....print string, print number of bytes....
-	la	$a0, 16($sp)		# assume the worse with jal's and always load it back into $a0, because jal's can compromise $a0
+	la	$a0, buffer		# assume the worse with jal's and always load it back into $a0, because jal's can compromise $a0
 	jal 	PrintString		# uh oh, jal, so we need to store something safely. 
 	
 	la	$a0, util_s_newline
@@ -56,9 +56,9 @@ main:
 	move 	$a0, $s0
 	jal 	PrintInteger
 	
-	lw	$s0, 200($sp)		# returns $s0's value back to what it was
-	lw	$ra, 204($sp)		
-	addi	$sp, $sp, 208
+	lw	$s0, 16($sp)		# returns $s0's value back to what it was
+	lw	$ra, 20($sp)		
+	addi	$sp, $sp, 24
 	
 	
 	jr	$ra
