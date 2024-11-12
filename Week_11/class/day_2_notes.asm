@@ -1,4 +1,6 @@
-# total = 0				# this is vulnerable, lose everytime we jal
+# First quiz from here, creating a stack, intro outro, arguments and return values  $v0 bit  
+#
+#  total = 0				# this is vulnerable, lose everytime we jal
 # for (int i = 0; i < 3: i++) {		# same with i, 
 #					# also we need to save the value of 3. know when to stop our loop!
 #	int number InputConsoleInt(); 	# this is a jal!
