@@ -11,21 +11,25 @@
 
 	.text
 
-print_zero:
-    li      $a0, 0  		  
-    li      $v0, 1           
-    syscall                 
-    jr      $ra             
+print_one_more:
+	
+    	addi    $a0, $a0, 1  		  
+   	li      $v0, 1           
+   	syscall 
+   	                
+   	jr      $ra             
 
 	.globl main
 main:
 
-    subi    $sp, $sp, 24     
-    sw      $ra, 20($sp)     
+   	subi    $sp, $sp, 24     
+    	sw      $ra, 20($sp)     
 
-    jal     print_zero       
+	li	$a0, 9
 
-    lw      $ra, 20($sp)    
-    addi    $sp, $sp, 24    
+    	jal     print_one_more       
 
-    jr      $ra             
+    	lw      $ra, 20($sp)    
+    	addi    $sp, $sp, 24    
+
+    	jr      $ra             
