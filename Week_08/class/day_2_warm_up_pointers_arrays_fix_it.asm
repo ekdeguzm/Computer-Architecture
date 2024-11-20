@@ -36,6 +36,8 @@ main:
 	
         LifGreater:
              sw    $t3, ($t5)		# put number 10 into the unit
+             addi    $t0, $t0, 1
+             b       LloopBegin
 
         LifEnd:	
     		# print what is it $t4

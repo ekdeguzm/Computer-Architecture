@@ -11,35 +11,56 @@
 
 # Translate this into MIPS code
 
-	.data
-	
-	.text
-	.globl main
-	
-RetrieveNumber: 
-	
+    .data
+    
+    .text
+    .globl main
+    
+RetrieveNumber:
+    # Placeholder for RetrieveNumber function
+    # In a real scenario, this would be implemented to return a number
+    li $v0, 5       # Syscall for reading integer
+    syscall
+    jr $ra
+
+PrintInteger:
+    # Placeholder for PrintInteger function
+    # In a real scenario, this would be implemented to print an integer
+    li $v0, 1       # Syscall for printing integer
+    syscall
+    jr $ra
 
 main:
+    # Set up stack frame
+    subi $sp, $sp, 24
+    sw $ra, 20($sp)
 
-	subi 	$sp, $sp, 24
-	sw	$ra, 20($sp)
+    li $t0, 0       # index i
+    li $t1, 0       # total
+    li $t2, 3       # limit
 
-	li	$t0, 0		# index i
-	li	$t1, 0		# total
-	li	$t2, 3		# limit
-	
-	LloopBegin:
-		blt	$t0, $t2, LloopEnd
- 
-		subi 	$sp, $sp, 24
-		sw	$ra, 20($sp)
-		
-		jal	RetrieveNumber
-		
+loop:
+    bge $t0, $t2, loop_end  # if (i >= 3) break
 
-	LloopEnd:
-	
-	addi 	$sp, $sp, 24
-	lw	$ra, 20($sp)
-	
-	jr	$ra
+    # Call RetrieveNumber
+    jal RetrieveNumber
+    
+    # Add returned number to total
+    add $t1, $t1, $v0
+    
+    # Increment i
+    addi $t0, $t0, 1
+    
+    j loop
+
+loop_end:
+    # Call PrintInteger with total
+    move $a0, $t1
+    jal PrintInteger
+
+    # Restore stack and return
+    lw $ra, 20($sp)
+    addi $sp, $sp, 24
+    
+    jr $ra
+
