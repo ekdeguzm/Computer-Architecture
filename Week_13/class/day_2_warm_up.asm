@@ -28,16 +28,17 @@ Encoding:
 
 
 # the answer is 
-# 1. R Type
+# 1. R Type, because it has op code at one end and function at the other, refer to notes
 
-# 2. 0000 00tt tttt tttt vvvv v000 0010 0101
-# 2. 0000 0001 0000 1001 0001 0000 0010 0101
-
-#     0    1   0    9     1    0     2     5
-
+# 2. 0000 00ss ssst tttt dddd d000 0010 0101 
+#    convert the numbers that is associated with the register to binary and put it in
 # 2. 000000 01000 01001 00010 00000 100101
 #    opcode  rs    rt    rd  shift  function	
 #			     amount   
+
+2. # 0000 0001 0000 1001 0001 0000 0010 0101
+
+#     0    1   0    9     1    0     2     5
 
 # Now divy it up into 4 bits each
 
@@ -50,5 +51,6 @@ Encoding:
 #   0    1   0    9     1    0     2     5
 
 # notes
-# know how to read the manual 
+# know how to read the manual, that is the most important part
+
 
