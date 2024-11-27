@@ -22,13 +22,24 @@ Compilation Process
 	
 	
 3. linker
+	combines data/text
+	resolve undefined symbols 
+	creates big file to execute
+	executable is the file that the linker creates. In c++ it is called a.out
+	Can customize the name of the file. 
+	
 4. loader
+	Puts the finished product in RAM
+	Sets up text, data, stack segments, and heap
+	Sets the stack pointer to appropriate value
+	Sets register program counter ($pc) to the appropriate value
+		This is the address of the first instruction
+		Now the next CPU cycle will execute and begin working up the program
+	
+Overall, this is high light 
 
-
-
-
-
-
+know sections of the object file
+What is relocation info? What is a symbol table?
 
 
 
