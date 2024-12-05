@@ -37,9 +37,10 @@ main:
 		syscall
 	
 	# write outro here
-	addi	$sp, $sp, 32
 	lw	$ra, 28($ra)
 	lw	$s0, 24($ra)
 	lw	$s1, 20($ra)
+	addi	$sp, $sp, 32
+
 
 	jr	$ra
