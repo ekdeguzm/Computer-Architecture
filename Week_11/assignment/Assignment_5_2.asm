@@ -64,6 +64,7 @@ badrange:   .asciiz "Guess not in range.\n"
 #         // Print prompt, get string (NOTE: You must pass the
 #         // address of the beginning of the character array
 #         // buffer as the second argument!)
+
 #         bytes_read = InputConsoleString(question, buffer, 16);
 #         if (bytes_read == 0) return -1;
 #
@@ -74,8 +75,10 @@ badrange:   .asciiz "Guess not in range.\n"
 #         // Here, you must pass the address of theguess as
 #         // the first argument, and the address of the
 #         // beginning of buffer as the second argument.
+
 #         status = axtoi(&theguess, buffer);
 #         if (status != 1)
+
 #         {
 #             PrintString(invalid);  // invalid is a global
 #             continue;
@@ -108,68 +111,91 @@ GetGuess:
 	#######################
 	# YOUR CODE HERE      #
 	#######################
- # Save registers that need to be preserved
-    addi  $sp, $sp, -40          # Make room for local variables (theguess, buffer, etc.)
-    sw    $ra, 36($sp)            # Save return address
-    sw    $a0, 32($sp)            # Save the address of the prompt
-    sw    $a1, 28($sp)            # Save min value
-    sw    $a2, 24($sp)            # Save max value
-    
-    # Allocate space for the buffer (16 bytes)
-    addi  $sp, $sp, -16           # Move stack pointer to allocate space for buffer
+	
+	# intro
+	subi	$sp, $sp, 72
+	sw	$ra, 68($sp)
+	sw	$s0, 64($sp)
+	sw	$s1, 60($sp)
+	sw	$s2, 56($sp)
+	# guess will be stored at 52
+	
+	move	$s0, $a0
+	move	$s1, $a1
+	move	$s2, $a2
 
-    # Loop start (label retry)
-retry:
-    # Print prompt message
-    lw    $a0, 32($sp)            # Load prompt message
-    lw    $a1, 28($sp)            # Load min value (not used in this call)
-    lw    $a2, 24($sp)            # Load max value (not used in this call)
-    jal   InputConsoleString      # Get user input in buffer (buffer is now on the stack)
-    
-    # Check if bytes_read == 0 (empty input)
-    beqz  $v0, empty_input        # If bytes_read == 0, return -1
-    
-    # Convert hex string to integer
-    la    $a0, 0($sp)             # Load buffer address from stack (start of buffer)
-    sw    $zero, 32($sp)          # Initialize theguess to 0
-    la    $a1, 32($sp)            # Load the address of theguess
-    jal   axtoi                   # Call axtoi to convert hex to integer
-    
-    # Check if conversion was successful (status != 1)
-    bnez  $v0, invalid_input      # If axtoi didn't succeed, print "Not a valid hexadecimal number."
-    
-    # Load theguess value
-    lw    $t0, 32($sp)
-    
-    # Check if theguess is in range
-    lw    $t1, 28($sp)            # Load min value
-    lw    $t2, 24($sp)            # Load max value
-    blt   $t0, $t1, badrange_check # If theguess < min, check for out of range
-    bgt   $t0, $t2, badrange_check # If theguess > max, check for out of range
-    
-    # If valid input and in range, return theguess
-    move  $v0, $t0                # Set return value to theguess
-    lw    $ra, 36($sp)            # Restore return address
-    addi  $sp, $sp, 56            # Restore stack pointer (after deallocating buffer space)
-    jr    $ra                     # Return to caller
-    
-invalid_input:
-    # Print invalid hexadecimal number message
-    la    $a0, invalid
-    jal   PrintString
-    j     retry                   # Retry the loop
+	
+LoopGetGuess:	
 
-badrange_check:
-    # Print "Guess not in range" message
-    la    $a0, badrange
-    jal   PrintString
-    j     retry                   # Retry the loop
+	# bytes_read = InputConsoleString(question, buffer, 16);
+	move 	$a0, $s0          # question
+	# lw	$a0, 72($sp)	  # because we saved the address as a word
+	# la	$a0, ($a0)	  # We must load the address from the word
+				  # $a0 was some address
+				  # 72($sp) = address as a number
+				  # lw loads 72($sp) as a number
+				  # la loads (72($sp)) as an address
+	
+    	addi 	$a1, $sp, 16      # buffer starts at sp+36
+    	li 	$a2, 16             # max bytes
+	jal InputConsoleString
+	
+	# if (bytes_read == 0) return -1;
+	beqz $v0, return_negative_one
+	
+	
+	# status = axtoi(&theguess, buffer);
+	# if (status != 1)
+	
+	la	$a0, 52($sp)
+	addi 	$a1, $sp, 16
+	jal	axtoi
+	
+	bne 	$v0, 1, Invalid
+	
+	
+	
+	lw	$t0, 52($sp)
+	slt	$t1, $t0, $s1
+	sgt	$t2, $t0, $s2
+	or	$t3, $t1, $t2
+	beq 	$t3, 1, BadRange	
+	
+	move	$v0, $t0
+	
+	b	Lend 
 
-empty_input:
-    # Return -1 if input is empty
-    li    $v0, -1
-    lw    $ra, 36($sp)            # Restore return address
-    addi  $sp, $sp, 56            # Restore stack pointer (after deallocating buffer space)
-    jr    $ra                     # Return to caller
+return_negative_one:
+    	li 	$v0, -1
+    	
+    	b 	Lend
+
+
+Invalid:
+	la	$a0, invalid
+	jal	PrintString
     
-.include "/Users/emildeguzman/Documents/Files/learning/CS270/util.s"
+    	b	LoopGetGuess
+    
+    
+    
+BadRange: 
+	la	$a0, badrange
+	jal	PrintString
+	
+	b 	LoopGetGuess
+	
+	
+Lend: 
+
+
+	# outro
+	lw	$ra, 68($sp)
+	lw	$s0, 64($sp)
+	lw	$s1, 60($sp)
+	lw	$s2, 56($sp)
+	addi	$sp, $sp, 72
+	
+    	jr      $ra
+    
+	.include "/Users/emildeguzman/Documents/Files/learning/CS270/util.s"

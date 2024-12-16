@@ -1,7 +1,8 @@
     .data
 min:       .word 1
-max:       .word 10  # This is 'a' in hexadecimal
-num:       .word 8   # Target number in decimal, 8 is '8' in hex
+max:       .word 10
+num:       .word 8     # I'd recommend trying different values
+                       # for this variable when testing.
 msgintro:  .asciiz "Guess must be a hexadecimal number between "
 msgand:    .asciiz " and "
 msgend:    .asciiz "\nEnter your guess (or nothing to quit).\n"
@@ -11,186 +12,205 @@ msghigh:   .asciiz "Guess is too high."
 msglow:    .asciiz "Guess is too low."
     .text
     .globl main
-
 main:
     ##################
-    # Build the prompt.
+    # YOUR CODE HERE #
     ##################
 
-    # Allocate space for buffer
-    subi     $sp, $sp, 16
+    # Step 1: Build prompt.
+    subi	$sp, $sp, 72
+    sw		$ra, 68($sp)
+    sw		$s0, 64($sp)
+    sw		$s1, 60($sp)
+    sw		$s2, 56($sp)
+    # buffer will be at 16($sp)
     
-    # Convert min to hex string
-    la      $a0, min       # Value to convert
-    move    $a1, $sp       # Buffer for conversion
-    jal     itoax          # Convert min to hex string
+    # char buffer[16];
+    # itoax(min, buffer);
+    lw		$a0, min
+    addi 	$a1, $sp, 16
+    jal		itoax	
     
-    # Build first part of prompt
-    la      $a0, msgintro  # First string
-    move    $a1, $sp       # Converted min value
-    jal     strdup2        # Concatenate strings
-    move    $s0, $v0       # Save prompt pointer
+    # char *prompt = strdup2(msgintro, buffer);
+    la		$a0, msgintro
+    addi 	$a1, $sp, 16
+    jal		strdup2
     
-    # Add " and " to prompt
-    move    $a0, $s0       # Previous prompt
-    la      $a1, msgand    # " and " string
-    jal     strdup2        # Concatenate
-    move    $s0, $v0       # Update prompt pointer
+    # prompt = strdup2(prompt, msgand);
+    move	$a0, $v0
+    la		$a1, msgand
+    jal		strdup2
+    move	$s0, $v0
     
-    # Convert max to hex string
-    la      $a0, max       # Value to convert
-    move    $a1, $sp       # Buffer for conversion
-    jal     itoax          # Convert max to hex string
     
-    # Add max value to prompt
-    move    $a0, $s0       # Previous prompt
-    move    $a1, $sp       # Converted max value
-    jal     strdup2        # Concatenate
-    move    $s0, $v0       # Update prompt pointer
+    # itoax(max, buffer);
+    lw		$a0, max
+    addi 	$a1, $sp, 16
+    jal		itoax
     
-    # Add final part to prompt
-    move    $a0, $s0       # Previous prompt
-    la      $a1, msgend    # Final string
-    jal     strdup2        # Concatenate
-    move    $s0, $v0       # Final prompt pointer
+    # prompt = strdup2(prompt, buffer);
+    move	$a0, $s0
+    addi 	$a1, $sp, 16
+    jal		strdup2
+    
+    # prompt = strdup2(prompt, msgend);
+    move	$a0, $v0
+    la 		$a1, msgend
+    jal		strdup2
+    
+    move	$s0, $v0
+    
+ 
 
-    ##################
-    # Game loop
-    ##################
-game_loop:
-    # Get guess
-    move    $a0, $s0       # Prompt string
-    lw      $a1, min       # Minimum value
-    lw      $a2, max       # Maximum value
-    jal     GetGuess       # Call GetGuess function
-    
-    # Check for quit (-1)
-    beq     $v0, -1, exit_game
-    
-    # Compare guess with target number
-    lw      $t0, num       # Load target number
-    
-    # Check if guess is correct
-    beq     $v0, $t0, win_game
-    
-    # Check if guess is too high
-    bgt     $v0, $t0, guess_high
-    
-    # Must be too low
-    la      $a0, msglow
-    jal     PrintString
-    j       game_loop
+    # Step 2: Repeatedly use GetGuess to get a guess
+    # from the user and report if it is too high, too
+    # low, or correct.
 
-guess_high:
-    la      $a0, msghigh
-    jal     PrintString
-    j       game_loop
+LloopBegin:
+	
+	move	$a0, $s0
+	lw	$a1, min
+	lw	$a2, max
+	jal	GetGuess	# Getting the guess
+	li	$t1, -1
+	
 
-win_game:
-    la      $a0, msgwin
-    jal     PrintString
+	
+	lw	$t0, num
+	beq   	$v0, $t1, LGuessBreak
+	beq 	$v0, $t0, Win
+	bgt 	$v0, $t0, High
+	blt	$v0, $t0, Low
+	
+	
 
-exit_game:
-    # Return from main
-    jr      $ra
+Win:
+	la	$a0, msgwin
+	jal	PrintString
+	b	LGuessBreak
+	
+High: 	
+	la	$a0, msghigh
+	jal	PrintString
+	b	LloopBegin
+	
+Low:	
+	la	$a0, msglow
+	jal	PrintString
+	b	LloopBegin
 
+LGuessBreak:
+
+    #outro
+    lw		$ra, 68($sp)
+    lw		$s0, 64($sp)
+    lw		$s1, 60($sp)
+    lw		$s2, 56($sp)
+    addi	$sp, $sp, 72
+    
+    jr		$ra 
 
 ################################
-# GetGuess Function
+# GetGuess
 ################################
     .data
 invalid:    .asciiz "Not a valid hexadecimal number"
 badrange:   .asciiz "Guess not in range"
     .text
     .globl  GetGuess
+# 
+# int GetGuess(char * question, int min, int max)
+# -----
+# This is your function from assignment 5. It repeatedly
+# asks the user for a guess until the guess is a valid
+# hexadecimal number between min and max.
 GetGuess:
-    # Create stack frame and allocate space for arguments and local variables
-    addi $sp, $sp, -52      # Allocate space for arguments and local vars
-    sw $ra, 16($sp)         # Save return address
-    sw $s0, 20($sp)         # Save $s0 (min)
-    sw $s1, 24($sp)         # Save $s1 (max)
-    sw $s2, 28($sp)         # Save $s2 (question ptr)
-
-    # Save arguments in saved registers
-    move $s0, $a1           # min
-    move $s1, $a2           # max
-    move $s2, $a0           # question
-
-    # Print the question prompt
-    move $a0, $s2           # Load question pointer
-    jal PrintString         # Print the prompt
-
-    # Allocate space for input buffer on the stack
-    addi $sp, $sp, -20       # Allocate 20 bytes on the stack for input buffer
-
-retry_input:
-    # Read input string into buffer on the stack
-    la      $a0, 0($sp)      # Load buffer address (on stack)
-    li      $a1, 20          # Buffer size
-    li      $v0, 8           # syscall for read string
-    syscall
-
-    # Check for empty input (quit)
-    lb      $t0, 0($sp)      # Load first byte of buffer
-    beq     $t0, 10, input_quit   # If first byte is newline, quit
-
-    # Prepare for hex to integer conversion
-    la      $a0, 0($sp)      # Buffer address (on stack)
-    jal     htoi             # Convert hex to integer
-
-    # Check conversion result
-    bltz $v0, invalid_hex    # Negative means invalid hex
-
-    # Check range
-    blt $v0, $s0, out_of_range   # Below minimum
-    bgt $v0, $s1, out_of_range  # Above maximum
-
-    # Valid hex in range - store and return
-    sw $v0, 32($sp)          # Store the guess
-
-    # Restore stack and return
-    lw $ra, 16($sp)
-    lw $s0, 20($sp)
-    lw $s1, 24($sp)
-    lw $s2, 28($sp)
-    addi $sp, $sp, 52        # Restore stack
-    jr $ra
-
-invalid_hex:
-    # Print error message for invalid hex
-    la $a0, invalid          # "Not a valid hexadecimal number"
-    jal PrintString
-
-    # Print newline
-    la $a0, msgnl
-    jal PrintString
-
-    j retry_input            # Try again
-
-out_of_range:
-    # Print error message for out of range
-    la $a0, badrange         # "Guess not in range"
-    jal PrintString
-
-    # Print newline
-    la $a0, msgnl
-    jal PrintString
-
-    j retry_input            # Try again
-
-input_quit:
-    # Return -1 to indicate quit
-    li $v0, -1
     
-    # Restore stack and return
-    lw $ra, 16($sp)
-    lw $s0, 20($sp)
-    lw $s1, 24($sp)
-    lw $s2, 28($sp)
-    addi $sp, $sp, 52        # Restore stack
-    jr $ra
+    ###################################
+    # YOUR CODE FROM ASMT 5 HERE      #
+    ###################################    
 
+	# intro
+	subi	$sp, $sp, 72
+	sw	$ra, 68($sp)
+	sw	$s0, 64($sp)
+	sw	$s1, 60($sp)
+	sw	$s2, 56($sp)
+	# guess will be stored at 52
+	
+	move	$s0, $a0
+	move	$s1, $a1
+	move	$s2, $a2
+
+	
+LoopGetGuess:	
+
+	# bytes_read = InputConsoleString(question, buffer, 16);
+	move 	$a0, $s0          # question
+	# lw	$a0, 72($sp)	  # because we saved the address as a word
+	# la	$a0, ($a0)	  # We must load the address from the word
+				  # $a0 was some address
+				  # 72($sp) = address as a number
+				  # lw loads 72($sp) as a number
+				  # la loads (72($sp)) as an address
+	
+    	addi 	$a1, $sp, 16      # buffer starts at sp+36
+    	li 	$a2, 16             # max bytes
+	jal InputConsoleString
+	
+	# if (bytes_read == 0) return -1;
+	beqz $v0, return_negative_one
+	
+	
+	# status = axtoi(&theguess, buffer);
+	# if (status != 1)
+	
+	la	$a0, 52($sp)	# theguess
+	addi 	$a1, $sp, 16	# buffer
+	jal	axtoi
+	
+	bne   	$v0, 1, Invalid # invalid breakpoint
+	
+	lw	$t0, 52($sp)
+	slt	$t1, $t0, $s1
+	sgt	$t2, $t0, $s2
+	or	$t3, $t1, $t2
+	beq 	$t3, 1, BadRange	
+	
+	move	$v0, $t0
+	
+	b	End 
+
+return_negative_one:
+    	li 	$v0, -1
+    	
+    	b 	End
+
+
+Invalid:
+	la	$a0, invalid
+	jal	PrintString
     
+    	b	LoopGetGuess
+    
+    
+    
+BadRange: 
+	la	$a0, badrange
+	jal	PrintString
+	
+	b 	LoopGetGuess
+	
+	
+End: 
+	# outro
+	lw	$ra, 68($sp)
+	lw	$s0, 64($sp)
+	lw	$s1, 60($sp)
+	lw	$s2, 56($sp)
+	addi	$sp, $sp, 72
+	
+    	jr      $ra
 ###################################
 #     OTHER HELPER FUNCTIONS      #
 ###################################
@@ -251,6 +271,5 @@ strdup2:
     lw      $ra,28($sp)
     add     $sp,$sp,32
     jr      $ra
-
 
     .include "/Users/emildeguzman/Documents/Files/learning/CS270/util.s"
