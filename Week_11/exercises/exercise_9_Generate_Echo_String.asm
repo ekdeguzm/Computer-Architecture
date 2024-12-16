@@ -103,8 +103,7 @@ generate_echo_string:
    	jal	InputConsoleString
 
 done:
-    	# Restore and return
-    	move	$v0, $s0
+
 
     	lw 	$ra, 44($sp)
     	lw 	$s0, 40($sp)  	# Save original string_to_modify address
