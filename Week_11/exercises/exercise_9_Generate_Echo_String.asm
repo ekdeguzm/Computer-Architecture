@@ -91,7 +91,7 @@ generate_echo_string:
     	bge	$s3, $s1, done
 
    	# char * starting_point = string_to_modify + prefix_length;
-   	add $t1, $s0, $s3
+   	add 	$t1, $s0, $s3
    	
    	# InputConsoleString(prompt, starting_point, max_bytes - prefix_length);
    	la	$a0, prompt
@@ -100,7 +100,7 @@ generate_echo_string:
    	jal	InputConsoleString
 
 done:
-    # Restore and return
+    	# Restore and return
     	move	$v0, $s0
 
     	lw 	$ra, 44($sp)
@@ -108,18 +108,18 @@ done:
     	lw 	$s1, 36($sp)  # Save max_bytes
     	lw	$s2, 32($sp)
     	addi 	$sp, $sp, 48
-    jr $ra
+    	jr 	$ra
 
 # Main function to test generate_echo_string
 main:
     # Allocate buffer and call generate_echo_string
-    la $a0, buffer        # Use static buffer
-    li $a1, 100           # Max bytes
-    jal generate_echo_string
+    la 		$a0, buffer        # Use static buffer
+    li 		$a1, 100           # Max bytes
+    jal 	generate_echo_string
     
     # Print the resulting string
-    li $v0, 4             # System call for print string
-    la $a0, buffer        # Load address of buffer
+    li 		$v0, 4             # System call for print string
+    la 		$a0, buffer        # Load address of buffer
     syscall
 
     # Exit program
