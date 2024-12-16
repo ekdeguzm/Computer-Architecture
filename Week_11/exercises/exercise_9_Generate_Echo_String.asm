@@ -58,21 +58,24 @@ generate_echo_string:
     	# $a1 = max_bytes
     	subi 	$sp, $sp, 48
     	sw 	$ra, 44($sp)
-    	sw 	$s0, 40($sp)  # Save original string_to_modify address
-    	sw 	$s1, 36($sp)  # Save max_bytes
+    	sw 	$s0, 40($sp)  	# Save original string_to_modify address
+    	sw 	$s1, 36($sp)  	# Save max_bytes
     	sw	$s2, 32($sp)	# max_bytes - 1
-    	sw	$s3, 28($sp) # prefix_length
+    	sw	$s3, 28($sp) 	# prefix_length
     	
 
-    	# Ensure last byte is null
+    	# Save $a0 and $a1
     	move 	$s0, $a0
     	move 	$s1, $a1
     
     	# string_to_modify[max_bytes - 1] = '\0';
-    	add 	$t0, $a0, $a1     # Calculate end of buffer
-    	addi 	$t0, $t0, -1     # Move back one byte
-    	move	$s2, $t0
-    	sb 	$zero, 0($t0) 
+    	addi 	$s2, $a1, -1	# max_bytes - 1
+    	add	$t0, $a0, $s2 	# (max_bytes - 1) + address of string to modify
+    	
+    	# add 	$t0, $a0, $a1     # Calculate end of buffer
+    	# addi 	$t0, $t0, -1     # Move back one byte
+    	# move	$s2, $t0
+    	sb 	$zero, ($t0) 
     	
     	     
 
@@ -82,9 +85,9 @@ generate_echo_string:
     	move	$s3, $v0
     	
     	# strncpy(string_to_modify, prefix, max_bytes - 1);
-    	
     	move	$a0, $s0
-    	move	$a1, $s2
+    	la	$a1, prefix
+    	move	$a2, $s2
     	jal	strncpy
     	
     	# if (prefix_length >= max_bytes)
@@ -104,14 +107,19 @@ done:
     	move	$v0, $s0
 
     	lw 	$ra, 44($sp)
-    	lw 	$s0, 40($sp)  # Save original string_to_modify address
-    	lw 	$s1, 36($sp)  # Save max_bytes
-    	lw	$s2, 32($sp)
+    	lw 	$s0, 40($sp)  	# Save original string_to_modify address
+    	lw 	$s1, 36($sp)  	# Save max_bytes
+    	lw	$s2, 32($sp)	# max_bytes - 1
+    	lw	$s3, 28($sp) 	# prefix_length
     	addi 	$sp, $sp, 48
-    	jr 	$ra
 
 # Main function to test generate_echo_string
 main:
+
+	# intro
+	subi 	$sp, $sp, 24
+	sw	$ra, 20($sp)
+	
     	# Allocate buffer and call generate_echo_string
     	la 	$a0, buffer        # Use static buffer
     	li 	$a1, 100           # Max bytes
@@ -122,5 +130,10 @@ main:
     	la 	$a0, buffer        # Load address of buffer
     	syscall
 
+
+	# outro
+	lw	$ra, 20($sp)
+	addi	$sp, $sp, 24
+	
     	# Exit program
     	jr	$ra
