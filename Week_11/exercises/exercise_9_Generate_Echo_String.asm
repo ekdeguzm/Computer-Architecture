@@ -112,15 +112,15 @@ done:
 
 # Main function to test generate_echo_string
 main:
-    # Allocate buffer and call generate_echo_string
-    la 		$a0, buffer        # Use static buffer
-    li 		$a1, 100           # Max bytes
-    jal 	generate_echo_string
+    	# Allocate buffer and call generate_echo_string
+    	la 	$a0, buffer        # Use static buffer
+    	li 	$a1, 100           # Max bytes
+    	jal 	generate_echo_string
     
-    # Print the resulting string
-    li 		$v0, 4             # System call for print string
-    la 		$a0, buffer        # Load address of buffer
-    syscall
+    	# Print the resulting string
+    	li 	$v0, 4             # System call for print string
+    	la 	$a0, buffer        # Load address of buffer
+    	syscall
 
-    # Exit program
-    jr	$ra
+    	# Exit program
+    	jr	$ra
