@@ -111,6 +111,8 @@ done:
     	lw	$s2, 32($sp)	# max_bytes - 1
     	lw	$s3, 28($sp) 	# prefix_length
     	addi 	$sp, $sp, 48
+    	
+    	jr	$ra
 
 # Main function to test generate_echo_string
 main:
